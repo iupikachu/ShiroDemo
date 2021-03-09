@@ -15,7 +15,9 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
-      // 根据用户名查找用户
+     // 根据id 查询用户
+     User findUserByUserId(Integer userId);
+     // 根据用户名查找用户
      User findByUserName(String UserName);
      // 保存用户
      void save (User user);
@@ -24,4 +26,5 @@ public interface UserMapper extends BaseMapper<User> {
      User findRolesByUserId(Integer userId);
      // 根据角色id获得权限集合
      Role findPermissionByRoleId(Integer roleId);
+
 }

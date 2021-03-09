@@ -18,7 +18,8 @@ import java.util.List;
 public interface UserService extends IService<User> {
 
 
-
+    // 根据id 查询用户
+    User findUserByUserId(Integer userId);
     // 根据用户id查询用户的所有角色
     User findRolesByUserId(Integer userId);
     // 根据角色id查询权限集合

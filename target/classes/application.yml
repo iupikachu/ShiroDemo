@@ -12,6 +12,7 @@ server:
   port: 8080
 #spring
 spring:
+
   jackson:
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
@@ -53,6 +54,10 @@ spring:
         wall:
           config:
             multi-statement-allow: true
+  redis:
+    port: 6379
+    host: 47.110.154.185
+    database: 0
 
 
 swagger:

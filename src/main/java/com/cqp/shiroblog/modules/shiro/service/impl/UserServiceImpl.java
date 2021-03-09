@@ -23,6 +23,12 @@ import java.util.List;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
     @Autowired
     UserMapper userMapper;
+
+    @Override
+    public User findUserByUserId(Integer userId) {
+        return userMapper.findUserByUserId(userId);
+    }
+
     @Override
     public User findRolesByUserId(Integer userId) {
         return userMapper.findRolesByUserId(userId);

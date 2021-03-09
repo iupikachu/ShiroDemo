@@ -2,6 +2,7 @@ package com.cqp.shiroblog.config;
 
 import com.cqp.shiroblog.modules.shiro.auth.AuthFilter;
 import com.cqp.shiroblog.modules.shiro.auth.CustomerRealm;
+import com.cqp.shiroblog.modules.shiro.cache.RedisCacheManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
@@ -34,7 +35,6 @@ public class ShiroConfig {
         securityManager.setRememberMeManager(null);
         return securityManager;
     }
-
     @Bean("shiroFilter")
     public ShiroFilterFactoryBean shirFilter(SecurityManager securityManager) {
         ShiroFilterFactoryBean shiroFilter = new ShiroFilterFactoryBean();
@@ -43,7 +43,6 @@ public class ShiroConfig {
         Map<String, Filter> filters = new HashMap<>();
         // 设置过滤
         filters.put("auth", new AuthFilter());
-
         shiroFilter.setFilters(filters);
         Map<String, String> filterMap = new LinkedHashMap<>();
         // anno匿名访问  auth验证
@@ -62,11 +61,17 @@ public class ShiroConfig {
         shiroFilter.setFilterChainDefinitionMap(filterMap);
         return shiroFilter;
     }
-
     // 创建自定义realm
     @Bean
     public Realm getRealm(){
         CustomerRealm customerRealm = new CustomerRealm();
+        // 开启缓存管理
+        customerRealm.setCacheManager(new RedisCacheManager<>());
+        customerRealm.setCachingEnabled(true); // 开启全局缓存
+        customerRealm.setAuthenticationCachingEnabled(true);// 认证缓存
+        customerRealm.setAuthenticationCacheName("authenticationCache");
+        customerRealm.setAuthorizationCachingEnabled(true);// 授权缓存
+        customerRealm.setAuthorizationCacheName("authorizationCache");
         return customerRealm;
     }
 
@@ -87,8 +92,4 @@ public class ShiroConfig {
         DefaultAdvisorAutoProxyCreator creator = new DefaultAdvisorAutoProxyCreator();
         return creator;
     }
-
-
-
-
 }

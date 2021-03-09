@@ -27,18 +27,13 @@ import java.util.Map;
  */
 @Component
 public class AuthFilter extends AuthenticatingFilter {
-    // 定义jackson对象 进行对象 java 和 json 的转换
     private static final ObjectMapper MAPPER = new ObjectMapper();
-
     /**
      *  把请求中的token封装为自定义的token
-     * @param servletRequest
-     * @param servletResponse
-     * @return
-     * @throws Exception
      */
     @Override
     protected AuthenticationToken createToken(ServletRequest servletRequest, ServletResponse servletResponse) throws Exception {
+        System.out.println("进入createToken");
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String jwt = request.getHeader("Authorization");
         if(org.springframework.util.StringUtils.isEmpty(jwt)){
@@ -47,13 +42,8 @@ public class AuthFilter extends AuthenticatingFilter {
         return new JwtToken(jwt);
 
     }
-
     /**
      * 步骤1. 将所有请求拒绝访问除了（Option请求）
-     * @param request
-     * @param response
-     * @param mappedValue
-     * @return
      */
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
@@ -72,7 +62,6 @@ public class AuthFilter extends AuthenticatingFilter {
         // 先获取请求的token,token 不存在的话就返回
         System.out.println("---进入onAccessDenied---");
         String jwt = JWTUtils.getRequestToken((HttpServletRequest) request);
-//        System.out.println("onAccessDenied token: "+token.toString());
         if(StringUtils.isBlank(jwt)){
             HttpServletResponse httpResponse = (HttpServletResponse) response;
             httpResponse.setHeader("Access-Control-Allow-Credentials", "true");
@@ -94,7 +83,6 @@ public class AuthFilter extends AuthenticatingFilter {
     /*
     token失效的时候调用
      */
-
     @Override
     protected boolean onLoginFailure(AuthenticationToken token, AuthenticationException e, ServletRequest request, ServletResponse response) {
         System.out.println("---进入onloginfailure---");

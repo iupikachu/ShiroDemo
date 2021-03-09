@@ -1,5 +1,6 @@
 package com.cqp.shiroblog.modules.shiro.auth;
 
+import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.cqp.shiroblog.common.utils.JWTUtils;
 import com.cqp.shiroblog.modules.shiro.entity.Permission;
@@ -36,9 +37,7 @@ public class CustomerRealm extends AuthorizingRealm {
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         System.out.println("====CustomerRealm.授权====");
         // 1.获取登录用户的信息
-        DecodedJWT userInfo = (DecodedJWT) principalCollection.getPrimaryPrincipal();
-        String user_id = userInfo.getClaims().get("user_id").asString();
-        String username = userInfo.getClaims().get("username").asString();
+        String user_id=(String) principalCollection.getPrimaryPrincipal();
         // 2.添加角色和权限
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
         User user = userService.findRolesByUserId(Integer.parseInt(user_id));
@@ -50,24 +49,25 @@ public class CustomerRealm extends AuthorizingRealm {
             for(Permission permission : role_permission.getPermissions()){
                 //2.1.1添加权限
                 simpleAuthorizationInfo.addStringPermission(permission.getPermission());
+                System.out.println("permissions: "+permission.getPermission());
             }
         }
         return simpleAuthorizationInfo;
     }
-
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         System.out.println("====CustomerRealm.认证====");
-
-        System.out.println("token.getprincipal: "+(String)token.getPrincipal());
         DecodedJWT tokenInfo = JWTUtils.getTokenInfo((String) token.getPrincipal());
         String accessToken = (String) token.getPrincipal();
         String user_id = tokenInfo.getClaims().get("user_id").asString();
+        /*
+        String user_id = tokenInfo.getClaims().get("user_id").asString();
         String username = tokenInfo.getClaims().get("username").asString();
-//        可以根据 status 锁定账户
-//        if(user.getStatus() == -1){
-//        throw new LockedAccountException("账户已被锁定");
-//        }
-        return new SimpleAuthenticationInfo(tokenInfo,accessToken,this.getName());
+        可以根据 user表的 status字段锁定账户
+        if(user.getStatus() == -1){
+        throw new LockedAccountException("账户已被锁定");
+        }
+         */
+        return new SimpleAuthenticationInfo(user_id,accessToken,this.getName());
     }
 }

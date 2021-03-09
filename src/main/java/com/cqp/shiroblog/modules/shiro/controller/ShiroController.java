@@ -62,10 +62,7 @@ public class ShiroController {
          }
         // 进行密码校验
         String salt = user.getSalt();
-        System.out.println("salt: "+salt);
         Md5Hash md5Hash = new Md5Hash(loginDTO.getPassword(),salt,1024);
-        System.out.println("md5Hash: "+md5Hash.toHex());
-        System.out.println("password: "+user.getPassword());
         if(!user.getPassword().equals(md5Hash.toHex())){
             result.put("status","402");
             result.put("msg","密码错误");
@@ -122,8 +119,8 @@ public class ShiroController {
      */
      @ApiOperation(value ="测试" )
      @RequiresAuthentication
-     @RequiresPermissions({"delete"}) //没有的话 AuthorizationException
-     @RequiresRoles("svip") //没有的话 AuthorizationException
+     @RequiresPermissions({"save"}) //没有的话 AuthorizationException
+     @RequiresRoles("vip") //没有的话 AuthorizationException
      @GetMapping("/sys/test")
     public Object test(){
          HashMap<String, Object> result = new HashMap<>();
